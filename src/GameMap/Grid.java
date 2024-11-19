@@ -1,3 +1,7 @@
+package GameMap;
+
+import Characters.Character;
+
 import java.util.ArrayList;
 
 public class Grid extends ArrayList<ArrayList<Cell>> {

@@ -1,3 +1,5 @@
+package Account;
+
 public class Credentials {
     private String email;
     private String password;

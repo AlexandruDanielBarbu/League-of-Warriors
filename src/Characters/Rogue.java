@@ -1,4 +1,6 @@
-public class Warrior extends Character {
+package Characters;
+
+public class Rogue extends Character {
     @Override
     public void receiveDamage(int damage) {
 
@@ -8,5 +10,4 @@ public class Warrior extends Character {
     public int getDamage() {
         return 0;
     }
-
 }

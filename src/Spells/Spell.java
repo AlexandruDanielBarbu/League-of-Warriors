@@ -1,3 +1,5 @@
+package Spells;
+
 abstract public class Spell {
     int damage;
     int manaCost;

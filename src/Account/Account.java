@@ -1,3 +1,7 @@
+package Account;
+
+import Characters.Character;
+
 import java.util.ArrayList;
 
 public class Account {

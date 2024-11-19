@@ -1,3 +1,5 @@
+package GameMap;
+
 import Enums.CellEntityType;
 
 public class Cell {

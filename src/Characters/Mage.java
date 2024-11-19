@@ -1,4 +1,6 @@
-public class Rogue extends Character {
+package Characters;
+
+public class Mage extends Character {
     @Override
     public void receiveDamage(int damage) {
 

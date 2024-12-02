@@ -50,6 +50,12 @@ public class Account {
         this.noPlayedGames = 0;
     }
 
+    public void printCharactersCreated(){
+        for(Character character : playerCharacters){
+            System.out.println(character);
+        }
+    }
+
     public int getNoPlayedGames() {
         return noPlayedGames;
     }

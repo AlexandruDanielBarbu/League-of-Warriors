@@ -14,16 +14,16 @@ public class Test {
         ));
 
         boolean rez = game.tryAddAccount(new Account(
-                "b@gmail.com",
+                "a@gmail.com",
                 "1234",
-                "Decebal2",
+                "Decebal",
                 "Romania",
                 null,
                 10
         ));
-//        System.out.println(rez + " could not create similar account");
+        System.out.println(rez + " could not create similar account");
 
-        game.listAccounts();
+        game.printAccounts();
 
         game.run();
     }

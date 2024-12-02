@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Game {
     ArrayList<Account> accounts;
     Grid gameMap;
+    Account runningAccount;
 
     public Game() {
         accounts = new ArrayList<Account>();
@@ -21,10 +22,18 @@ public class Game {
         return true;
     }
 
-    public void listAccounts() {
+    public void removeAccount(Account account) {
+        accounts.remove(account);
+    }
+
+    public void printAccounts() {
         for (Account account : accounts) {
             System.out.println(account);
         }
+    }
+
+    public void swapRunningAccount(Account account) {
+        runningAccount = account;
     }
 
     public void run() {
@@ -43,12 +52,15 @@ public class Game {
             if (loggedInUserCredentials.equals(accountCredentials)) {
                 wasFound = true;
                 System.out.println("You have an account");
+                swapRunningAccount(accounts.get(i));
             }
         }
 
         if (!wasFound) {
             System.out.println("You have not logged in");
         }
+
+        runningAccount.printCharactersCreated();
     }
 
     // method for getting the cell commands and next available command

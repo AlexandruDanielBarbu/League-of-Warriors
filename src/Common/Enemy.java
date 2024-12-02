@@ -1,3 +1,5 @@
+package Common;
+
 public class Enemy extends Entity {
     @Override
     public void receiveDamage(int damage) {

@@ -1,3 +1,5 @@
+package Common;
+
 import Interfaces.Battle;
 
 import java.util.ArrayList;

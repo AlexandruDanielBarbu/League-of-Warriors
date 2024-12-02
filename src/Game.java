@@ -13,6 +13,10 @@ public class Game {
         accounts = new ArrayList<Account>();
     }
 
+    public void setAccounts(ArrayList<Account> accounts) {
+        this.accounts = accounts;
+    }
+
     public boolean tryAddAccount(Account account) {
         if (accounts.contains(account)) {
             return false;

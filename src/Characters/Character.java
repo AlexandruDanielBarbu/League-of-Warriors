@@ -3,11 +3,11 @@ package Characters;
 import Common.Entity;
 
 abstract public class Character extends Entity {
-    String name;
-    int experience;
-    int level;
+    protected String name;
+    protected int experience;
+    protected int level;
 
-    int strength;
-    int charisma;
-    int dexterity;
+    protected int strength;
+    protected int charisma;
+    protected int dexterity;
 }

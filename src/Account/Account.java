@@ -3,23 +3,35 @@ package Account;
 import Characters.Character;
 
 import java.util.ArrayList;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Account {
-    class Information {
-        // favourite games - sorted alphabetically
-
+    public static class Information {
         Credentials playerCredentials;
         String playerName;
         String playerCountry;
+        SortedSet<String> favoriteGames;
 
         public Information(String email, String password, String playerName, String playerCountry) {
             this.playerCredentials = new Credentials(email, password);
+            favoriteGames = new TreeSet<>();
+            this.playerName = playerName;
+            this.playerCountry = playerCountry;
+        }
+
+        public Information(Credentials playerCredentials, SortedSet<String> favoriteGames, String playerName, String playerCountry) {
+            this.playerCredentials = playerCredentials;
+            this.favoriteGames = favoriteGames;
             this.playerName = playerName;
             this.playerCountry = playerCountry;
         }
 
         public Information(){
-            this(null,null,null,null);
+            this.playerCredentials = new Credentials();
+            favoriteGames = new TreeSet<>();
+            this.playerName = playerName;
+            this.playerCountry = playerCountry;
         }
 
         @Override
@@ -44,6 +56,11 @@ public class Account {
         this.noPlayedGames = noPlayedGames;
     }
 
+    public Account(ArrayList<Character> playerCharacters, int noPlayedGames, Information playerInfo) {
+        this.playerCharacters = playerCharacters;
+        this.noPlayedGames = noPlayedGames;
+        this.playerInfo = playerInfo;
+    }
     public Account(){
         this.playerInfo = new Information();
         this.playerCharacters = new ArrayList<>();

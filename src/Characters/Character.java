@@ -10,4 +10,9 @@ abstract public class Character extends Entity {
     protected int strength;
     protected int charisma;
     protected int dexterity;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

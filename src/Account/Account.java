@@ -36,7 +36,10 @@ public class Account {
 
         @Override
         public String toString() {
-            return "Player: " + playerName + ", Country: " + playerCountry + playerCredentials;
+            return "Player: " + playerName +
+                    "\nCountry: " + playerCountry +
+                    "\n" + playerCredentials +
+                    "\n" + favoriteGames;
         }
     }
 
@@ -87,6 +90,9 @@ public class Account {
 
     @Override
     public String toString() {
-        return playerInfo.toString() + "Played Games: " + noPlayedGames;
+        return playerInfo +
+                "\nPlayed Games: " + noPlayedGames +
+                "\nCharacters: " + playerCharacters +
+                "\n";
     }
 }

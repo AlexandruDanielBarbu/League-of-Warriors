@@ -10,6 +10,10 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     static final int MAX_GRID_SIZE = 10;
     static final int MIN_GRID_SIZE = 5;
 
+    static final int MAX_PORTALS_ALLOWED = 1;
+    static final int MIN_SANCTUARY_COUNT = 2;
+    static final int MIN_ENEMY_COUNT = 4;
+
     private int width;
     private int length;
     private Character currentCharacter;
@@ -33,13 +37,33 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     }
 
     static public Grid createRandomGrid(Character currentCharacter) {
+        int portalCount = 0;
+        int sanctuaryCount = 0;
+        int enemyCount = 0;
+
         Grid gameMap = new Grid(currentCharacter);
         for (int i = 0; i < gameMap.width; i++ ) {
             gameMap.add(new ArrayList<Cell>());
 
             for (int j = 0; j < gameMap.length; j++ ) {
                 gameMap.get(i).add(new Cell(i, j));
+
                 Cell cell = gameMap.get(i).get(j);
+                if (cell.getCellType() == CellEntityType.PORTAL &&
+                    portalCount < MAX_PORTALS_ALLOWED) {
+                    portalCount++;
+                } else {
+                    cell.setCellType(CellEntityType.VOID);
+                }
+
+                if (cell.getCellType() == CellEntityType.SANCTUARY) {
+                    sanctuaryCount++;
+                }
+
+                if (cell.getCellType() == CellEntityType.ENEMY) {
+                    enemyCount++;
+                }
+
                 if (cell.getCellType() == CellEntityType.VOID &&
                     gameMap.characterCell == null) {
                     gameMap.characterCell = cell;
@@ -47,6 +71,78 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                 }
             }
         }
+
+        if (portalCount < MAX_PORTALS_ALLOWED) {
+            for (int i = 0; i < gameMap.width; i++ ) {
+                for (int j = 0; j < gameMap.length; j++ ) {
+                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID &&
+                            portalCount < MAX_PORTALS_ALLOWED) {
+                        portalCount++;
+                        gameMap.get(i).get(j).setCellType(CellEntityType.PORTAL);
+                    }
+                }
+            }
+
+        }
+
+        if (sanctuaryCount < MIN_SANCTUARY_COUNT) {
+            for (int i = 0; i < gameMap.width; i++ ) {
+                for (int j = 0; j < gameMap.length; j++ ) {
+                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID &&
+                        sanctuaryCount < MIN_SANCTUARY_COUNT) {
+                        sanctuaryCount++;
+                        gameMap.get(i).get(j).setCellType(CellEntityType.SANCTUARY);
+                    }
+                }
+            }
+        }
+
+        if (enemyCount < MIN_ENEMY_COUNT) {
+            for (int i = 0; i < gameMap.width; i++ ) {
+                for (int j = 0; j < gameMap.length; j++ ) {
+                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID &&
+                        enemyCount < MIN_ENEMY_COUNT) {
+                        enemyCount++;
+                        gameMap.get(i).get(j).setCellType(CellEntityType.ENEMY);
+                    }
+                }
+            }
+        }
+
+        if (gameMap.characterCell == null) {
+            for (int i = 0; i < gameMap.width; i++) {
+                for (int j = 0; j < gameMap.length; j++) {
+                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID) {
+                        gameMap.characterCell = gameMap.get(i).get(j);
+                    }
+                }
+            }
+
+            if (gameMap.characterCell == null) {
+                if (sanctuaryCount - 1 >= MIN_SANCTUARY_COUNT) {
+                    sanctuaryCount--;
+                    for (int i = 0; i < gameMap.width; i++) {
+                        for (int j = 0; j < gameMap.length; j++) {
+                            if (gameMap.get(i).get(j).getCellType() == CellEntityType.SANCTUARY) {
+                                gameMap.characterCell = gameMap.get(i).get(j);
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            if (gameMap.characterCell == null) {
+                for (int i = 0; i < gameMap.width; i++) {
+                    for (int j = 0; j < gameMap.length; j++) {
+                        if (gameMap.get(i).get(j).getCellType() == CellEntityType.ENEMY) {
+                            gameMap.characterCell = gameMap.get(i).get(j);
+                        }
+                    }
+                }
+            }
+        }
+
         return gameMap;
     }
 

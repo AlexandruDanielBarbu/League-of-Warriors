@@ -24,8 +24,12 @@ public class Cell {
         this.cellType =cellType;
     }
 
-    public void overwriteCellType(CellEntityType cellType) {
+    public void setCellType(CellEntityType cellType) {
         this.cellType = cellType;
+    }
+
+    public CellEntityType getCellType() {
+        return cellType;
     }
 
     public boolean isVisited() {
@@ -38,6 +42,6 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "X: " + x + ", Y: " + y + ", Type: " + cellType + ", Visited: " + visited;
+        return "(" + x + ", " + y + "), Type: " + cellType + ", Visited: " + visited;
     }
 }

@@ -28,6 +28,6 @@ public class Test {
         game.setAccounts(JsonInput.deserializeAccounts());
         game.printAccounts();
 
-//        game.run();
+        game.run();
     }
 }

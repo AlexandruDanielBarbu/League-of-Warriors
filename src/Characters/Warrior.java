@@ -1,5 +1,7 @@
 package Characters;
 
+import Common.Game;
+import Enums.GameState;
 import Spells.Earth;
 import Spells.Fire;
 import Spells.Ice;
@@ -28,8 +30,10 @@ public class Warrior extends Character {
 
         currentHP -= newDamage;
         if (currentHP <= 0) {
-            System.out.println("You lose Warrior... Game Over!");
+            System.out.println("You lose Warrior... Common.Game Over!");
             isAlive = false;
+            Game.getInstance().setGameState(GameState.FINISHED_BAD);
+
             // signal game over
         }
     }

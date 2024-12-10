@@ -1,10 +1,10 @@
-import Account.Account;
+import Common.Game;
 import Common.JsonInput;
 
 public class Test {
     public static void main(String[] args) {
 
-        Game game = new Game();
+        Game game = Game.getInstance();
 //        game.tryAddAccount(new Account(
 //                "a@gmail.com",
 //                "1234",

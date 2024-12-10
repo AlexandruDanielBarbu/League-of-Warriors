@@ -1,8 +1,10 @@
 package Characters;
 
+import Enums.GameState;
 import Spells.Earth;
 import Spells.Fire;
 import Spells.Ice;
+import Common.Game;
 
 public class Rogue extends Character {
     public Rogue(String name, int experience, int level) {
@@ -28,9 +30,9 @@ public class Rogue extends Character {
 
         currentHP -= newDamage;
         if (currentHP <= 0) {
-            System.out.println("You lose Rogue... Game Over!");
+            System.out.println("You lose Rogue... Common.Game Over!");
             isAlive = false;
-            // signal game over!!
+            Game.getInstance().setGameState(GameState.FINISHED_BAD);
         }
     }
 

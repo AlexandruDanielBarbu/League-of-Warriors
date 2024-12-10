@@ -3,7 +3,9 @@ package GameMap;
 import Account.Account;
 import Characters.Character;
 import Common.Enemy;
+import Common.Game;
 import Enums.CellEntityType;
+import Enums.GameState;
 import Spells.Spell;
 
 import java.util.ArrayList;
@@ -218,6 +220,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                     playerCharacter.setLevel(playerCharacter.getLevel() + 1);
                     playerCharacter.setExperience(playerCharacter.getExperience() + XP_MULTIPLIER * playerCharacter.getLevel());
                     account.setNoPlayedGames(account.getNoPlayedGames() + 1);
+                    Game.getInstance().setGameState(GameState.FINISHED_GOOD);
                 }
                 case ENEMY -> {
                     // enemy encounter
@@ -299,7 +302,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         return playerCharacter;
     }
 
-    // if player cannot move an exception is thrown and Game class handles it
+    // if player cannot move an exception is thrown and Common.Game class handles it
     public void goNorth() {
         characterCell = get(characterCell.getX() - 1).get(characterCell.getY());
         cellAction(characterCell);

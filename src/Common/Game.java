@@ -1,3 +1,5 @@
+package Common;
+
 import Account.Account;
 import Account.Credentials;
 import Characters.Character;
@@ -7,21 +9,47 @@ import GameMap.Grid;
 import java.util.ArrayList;
 
 public class Game {
-    ArrayList<Account> accounts;
-    Grid gameMap;
+    //region Singleton
+    private static Game game_instance = null;
 
-    private Account runningAccount;
-    private Character playerCharacter;
-    private GameState gameState = GameState.RUNNING;
-
-    public Game() {
+    private Game() {
         accounts = new ArrayList<Account>();
     }
+
+    public static synchronized Game getInstance() {
+        if (game_instance == null) {
+            game_instance = new Game();
+            return game_instance;
+        }
+        return game_instance;
+    }
+    //endregion
+
+    private Grid gameMap;
+    private Character playerCharacter;
+
+    //region Common.Game State
+    private GameState gameState = GameState.RUNNING;
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+    //endregion
+
+
+    //region Account management
+    private Account runningAccount;
+    ArrayList<Account> accounts;
 
     public void setAccounts(ArrayList<Account> accounts) {
         this.accounts = accounts;
     }
 
+    // does not work yet
     public boolean tryAddAccount(Account account) {
         if (accounts.contains(account)) {
             return false;
@@ -73,6 +101,7 @@ public class Game {
 
         return wasFound;
     }
+    //endregion
 
     private void chooseCharacter() {
         System.out.print("Choose a character by typing his number: ");
@@ -82,41 +111,38 @@ public class Game {
         System.out.println(playerCharacter);
     }
 
-    private void gameLoop(Grid gameMap){
+    private void gameLoop(){
         while (gameState == GameState.RUNNING) {
-            System.out.println("Press key to move character: W S A D");
+            System.out.println("Press key to move character: W A S D");
             char choice = System.console().readLine().charAt(0);
 
-            switch(choice){
-                case 'w':
-                case 'W':
-                    gameMap.goNorth();
-                    break;
-
-                case 's':
-                case 'S':
-                    gameMap.goSouth();
-                    break;
-
-                case 'a':
-                case 'A':
-                    gameMap.goWest();
-                    break;
-
-                case 'd':
-                case 'D':
-                    gameMap.goEast();
-                    break;
-
-                default:
-                    System.out.println("Invalid choice");
+            switch (choice) {
+                case 'w', 'W' -> gameMap.goNorth();
+                case 's', 'S' -> gameMap.goSouth();
+                case 'a', 'A' -> gameMap.goWest();
+                case 'd', 'D' -> gameMap.goEast();
+                default -> System.out.println("Invalid choice");
             }
 
             System.out.println(gameMap.getCharacterCell());
             System.out.println(gameMap);
         }
-    }
-    public void run() {
+
+   }
+
+    private void determineNextGameLoop() {
+       switch (gameState) {
+           case FINISHED_BAD -> System.out.println("GAME OVER!");
+           case FINISHED_GOOD -> {
+               System.out.println("MAP COMPLETED!");
+               gameMap = Grid.createRandomGrid(playerCharacter, runningAccount);
+               gameState = GameState.RUNNING;
+               gameLoop();
+           }
+       }
+   }
+
+   public void run() {
         boolean loggedIn = logIn();
         if (loggedIn) {
             runningAccount.printCharactersCreated();
@@ -124,9 +150,9 @@ public class Game {
 
             gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
             System.out.println(gameMap.toString());
-            gameLoop(gameMap);
+            gameLoop();
+            determineNextGameLoop();
         }
-
     }
 
     public Character getPlayerCharacter() {

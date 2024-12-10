@@ -206,6 +206,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
             switch (cell.getCellType()) {
                 case VOID -> {
+                    System.out.println("VOOOOOID");
                     // do nothing;
                 }
                 case SANCTUARY -> {
@@ -218,12 +219,15 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                     playerCharacter.setExperience(playerCharacter.getExperience() + XP_MULTIPLIER * playerCharacter.getLevel());
                     account.setNoPlayedGames(account.getNoPlayedGames() + 1);
                 }
-                case ENEMY ->
+                case ENEMY -> {
                     // enemy encounter
-                        System.out.println("Battling enemy");
-                default -> {
+                    System.out.println("Battling enemy");
+                    Enemy enemy = new Enemy();
+                    battleEnemy(enemy);
                 }
-                // nothing here
+                default -> {
+                    // nothing here
+                }
             }
         }
     }
@@ -298,26 +302,26 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     // if player cannot move an exception is thrown and Game class handles it
     public void goNorth() {
         characterCell = get(characterCell.getX() - 1).get(characterCell.getY());
-        characterCell.setVisited(true);
         cellAction(characterCell);
+        characterCell.setVisited(true);
     }
 
     public void goSouth() {
         characterCell = get(characterCell.getX() + 1).get(characterCell.getY());
-        characterCell.setVisited(true);
         cellAction(characterCell);
+        characterCell.setVisited(true);
     }
 
     public void goWest() {
         characterCell = get(characterCell.getX()).get(characterCell.getY() - 1);
-        characterCell.setVisited(true);
         cellAction(characterCell);
+        characterCell.setVisited(true);
     }
 
     public void goEast() {
         characterCell = get(characterCell.getX()).get(characterCell.getY() + 1);
-        characterCell.setVisited(true);
         cellAction(characterCell);
+        characterCell.setVisited(true);
     }
 
 

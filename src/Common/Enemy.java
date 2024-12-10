@@ -26,6 +26,10 @@ public class Enemy extends Entity {
         abilities.add(new Ice());
     }
 
+    public Enemy(){
+        this(100, 100);
+    }
+
     @Override
     public void receiveDamage(int damage) {
         currentHP -= damage;

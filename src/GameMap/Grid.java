@@ -4,6 +4,7 @@ import Account.Account;
 import Characters.Character;
 import Common.Enemy;
 import Common.Game;
+import CustomExceptions.InvalidPlayerMove;
 import Enums.CellEntityType;
 import Enums.GameState;
 import Spells.Spell;
@@ -208,7 +209,6 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
             switch (cell.getCellType()) {
                 case VOID -> {
-                    System.out.println("VOOOOOID");
                     // do nothing;
                 }
                 case SANCTUARY -> {
@@ -304,29 +304,45 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
     // if player cannot move an exception is thrown and Common.Game class handles it
     public void goNorth() {
-        characterCell = get(characterCell.getX() - 1).get(characterCell.getY());
-        cellAction(characterCell);
-        characterCell.setVisited(true);
+        try{
+            characterCell = get(characterCell.getX() - 1).get(characterCell.getY());
+            cellAction(characterCell);
+            characterCell.setVisited(true);
+        } catch (Exception e) {
+            throw new InvalidPlayerMove("Player cannot go north");
+        }
+
     }
 
     public void goSouth() {
-        characterCell = get(characterCell.getX() + 1).get(characterCell.getY());
-        cellAction(characterCell);
-        characterCell.setVisited(true);
+        try{
+            characterCell = get(characterCell.getX() + 1).get(characterCell.getY());
+            cellAction(characterCell);
+            characterCell.setVisited(true);
+        } catch (Exception e) {
+            throw new InvalidPlayerMove("Player cannot go south");
+        }
     }
 
     public void goWest() {
-        characterCell = get(characterCell.getX()).get(characterCell.getY() - 1);
-        cellAction(characterCell);
-        characterCell.setVisited(true);
+        try {
+            characterCell = get(characterCell.getX()).get(characterCell.getY() - 1);
+            cellAction(characterCell);
+            characterCell.setVisited(true);
+        } catch (Exception e) {
+            throw new InvalidPlayerMove("Player cannot go west");
+        }
     }
 
     public void goEast() {
-        characterCell = get(characterCell.getX()).get(characterCell.getY() + 1);
-        cellAction(characterCell);
-        characterCell.setVisited(true);
+        try {
+            characterCell = get(characterCell.getX()).get(characterCell.getY() + 1);
+            cellAction(characterCell);
+            characterCell.setVisited(true);
+        } catch (Exception e) {
+            throw new InvalidPlayerMove("Player cannot go east");
+        }
     }
-
 
     @Override
     public String toString() {

@@ -3,6 +3,7 @@ package Common;
 import Account.Account;
 import Account.Credentials;
 import Characters.Character;
+import CustomExceptions.InvalidPlayerMove;
 import Enums.GameState;
 import GameMap.Grid;
 
@@ -116,18 +117,23 @@ public class Game {
             System.out.println("Press key to move character: W A S D");
             char choice = System.console().readLine().charAt(0);
 
-            switch (choice) {
-                case 'w', 'W' -> gameMap.goNorth();
-                case 's', 'S' -> gameMap.goSouth();
-                case 'a', 'A' -> gameMap.goWest();
-                case 'd', 'D' -> gameMap.goEast();
-                default -> System.out.println("Invalid choice");
+            try {
+                switch (choice) {
+                    case 'w', 'W' -> gameMap.goNorth();
+                    case 's', 'S' -> gameMap.goSouth();
+                    case 'a', 'A' -> gameMap.goWest();
+                    case 'd', 'D' -> gameMap.goEast();
+                    default -> throw new InvalidPlayerMove("Invalid player input!");
+                }
+
+                System.out.println(gameMap.getCharacterCell());
+                System.out.println(gameMap);
+            } catch (InvalidPlayerMove e){
+                System.out.println(e.getMessage());
+            } catch (Exception e){
+                System.out.println("Some other random error occured\n" + e.getMessage());
             }
-
-            System.out.println(gameMap.getCharacterCell());
-            System.out.println(gameMap);
         }
-
    }
 
     private void determineNextGameLoop() {

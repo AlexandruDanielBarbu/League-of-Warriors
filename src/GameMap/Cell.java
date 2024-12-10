@@ -40,6 +40,14 @@ public class Cell {
         this.visited = visited;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     @Override
     public String toString() {
         return "(" + x + ", " + y + "), Type: " + cellType + ", Visited: " + visited;

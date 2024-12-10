@@ -2,6 +2,7 @@ package Spells;
 
 public class Earth extends Spell {
     public Earth() {
-        super();
+        damage = 20;
+        manaCost = 15;
     }
 }

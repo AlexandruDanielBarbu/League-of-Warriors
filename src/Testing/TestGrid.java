@@ -2,8 +2,8 @@ import GameMap.Grid;
 
 public class TestGrid {
     public static void main(String[] args) {
-        Grid map = Grid.createRandomGrid(null);
-        Grid map2 = Grid.createHarcodedGrid(null);
+        Grid map = Grid.createRandomGrid(null, null);
+        Grid map2 = Grid.createHardcodedGrid(null, null);
 
         System.out.println("Random Map");
         System.out.println(map.toString());

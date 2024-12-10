@@ -2,6 +2,7 @@ package Spells;
 
 public class Ice extends Spell {
     public Ice() {
-        super();
+        damage = 20;
+        manaCost = 15;
     }
 }

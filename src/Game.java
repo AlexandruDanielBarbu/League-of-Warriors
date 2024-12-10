@@ -1,6 +1,7 @@
 import Account.Account;
 import Account.Credentials;
 import Characters.Character;
+import Enums.GameState;
 import GameMap.Grid;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class Game {
 
     private Account runningAccount;
     private Character playerCharacter;
+    private GameState gameState = GameState.RUNNING;
 
     public Game() {
         accounts = new ArrayList<Account>();
@@ -72,20 +74,57 @@ public class Game {
         return wasFound;
     }
 
-    private void chooseCharacter(){
+    private void chooseCharacter() {
         System.out.print("Choose a character by typing his number: ");
 
         int characterNumber = Integer.parseInt(System.console().readLine());
         playerCharacter = runningAccount.getPlayerCharacter(characterNumber);
         System.out.println(playerCharacter);
     }
+
+    private void gameLoop(Grid gameMap){
+        while (gameState == GameState.RUNNING) {
+            System.out.println("Press key to move character: W S A D");
+            char choice = System.console().readLine().charAt(0);
+
+            switch(choice){
+                case 'w':
+                case 'W':
+                    gameMap.goNorth();
+                    break;
+
+                case 's':
+                case 'S':
+                    gameMap.goSouth();
+                    break;
+
+                case 'a':
+                case 'A':
+                    gameMap.goWest();
+                    break;
+
+                case 'd':
+                case 'D':
+                    gameMap.goEast();
+                    break;
+
+                default:
+                    System.out.println("Invalid choice");
+            }
+
+            System.out.println(gameMap.getCharacterCell());
+            System.out.println(gameMap);
+        }
+    }
     public void run() {
         boolean loggedIn = logIn();
         if (loggedIn) {
             runningAccount.printCharactersCreated();
             chooseCharacter();
-            gameMap = Grid.createHarcodedGrid(playerCharacter);
-            System.out.println(gameMap.toString(true));
+
+            gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
+            System.out.println(gameMap.toString());
+            gameLoop(gameMap);
         }
 
     }

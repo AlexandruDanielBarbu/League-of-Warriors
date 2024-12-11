@@ -1,6 +1,13 @@
 package Spells;
 
 abstract public class Spell {
+    //region Constants
+    protected final int MAX_DAMAGE = 20;
+    protected final int MAX_MANA_COST = 15;
+    protected final int MIN_DAMAGE = 10;
+    protected final int MIN_MANA_COST = 3;
+    //endregion
+
     protected int damage;
     protected int manaCost;
 

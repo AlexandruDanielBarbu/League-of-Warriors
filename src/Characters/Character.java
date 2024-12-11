@@ -35,7 +35,7 @@ abstract public class Character extends Entity {
 
     public boolean addSkillPoints(int points, Skills skill) {
         switch (skill) {
-            case STRENGTH:
+            case STRENGTH -> {
                 if (strength == MAX_STAT) {
                     return false;
                 }
@@ -43,8 +43,8 @@ abstract public class Character extends Entity {
                 if (strength > MAX_STAT) {
                     strength = MAX_STAT;
                 }
-                break;
-            case DEXTERITY:
+            }
+            case DEXTERITY -> {
                 if (dexterity == MAX_STAT) {
                     return false;
                 }
@@ -52,8 +52,8 @@ abstract public class Character extends Entity {
                 if (dexterity > MAX_STAT) {
                     dexterity = MAX_STAT;
                 }
-                break;
-            case CHARISMA:
+            }
+            case CHARISMA -> {
                 if (charisma == MAX_STAT) {
                     return false;
                 }
@@ -61,9 +61,15 @@ abstract public class Character extends Entity {
                 if (charisma > MAX_STAT) {
                     charisma = MAX_STAT;
                 }
-                break;
+            }
         }
         return true;
+    }
+
+    public int specialManaCost(int manaCost){
+        int newManaCost = manaCost - MANA_REDUCTION * (charisma / 5);
+        if (newManaCost < 0){ newManaCost = 3; }
+        return newManaCost;
     }
     //endregion
 

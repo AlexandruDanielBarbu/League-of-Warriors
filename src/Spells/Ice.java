@@ -1,8 +1,11 @@
 package Spells;
 
+import java.util.Random;
+
 public class Ice extends Spell {
     public Ice() {
-        damage = 20;
-        manaCost = 15;
+        Random rand = new Random();
+        damage = rand.nextInt(MAX_DAMAGE - MIN_DAMAGE) + MIN_DAMAGE;
+        manaCost = rand.nextInt(MAX_MANA_COST - MIN_MANA_COST) + MIN_MANA_COST;
     }
 }

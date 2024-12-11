@@ -2,6 +2,7 @@ package Common;
 
 import Account.Account;
 import Account.Credentials;
+import Achievements.*;
 import Characters.Character;
 import CustomExceptions.InvalidPlayerMove;
 import Enums.GameState;
@@ -15,6 +16,11 @@ public class Game {
 
     private Game() {
         accounts = new ArrayList<Account>();
+
+        achievements = new ArrayList<Achievement>();
+        achievements.add(new DevoidOfLife());
+        achievements.add(new Oasis());
+        achievements.add(new Wasteland());
     }
 
     public static synchronized Game getInstance() {
@@ -29,7 +35,7 @@ public class Game {
     private Grid gameMap;
     private Character playerCharacter;
 
-    //region Common.Game State
+    //region Game State Handle
     private GameState gameState = GameState.RUNNING;
 
     public GameState getGameState() {
@@ -40,7 +46,6 @@ public class Game {
         this.gameState = gameState;
     }
     //endregion
-
 
     //region Account management
     private Account runningAccount;
@@ -104,6 +109,12 @@ public class Game {
     }
     //endregion
 
+    public ArrayList<Achievement> getAchievements() {
+        return achievements;
+    }
+
+    private ArrayList<Achievement> achievements;
+
     private void chooseCharacter() {
         System.out.print("Choose a character by typing his number: ");
 
@@ -120,9 +131,16 @@ public class Game {
             try {
                 switch (choice) {
                     case 'w', 'W' -> gameMap.goNorth();
-                    case 's', 'S' -> gameMap.goSouth();
                     case 'a', 'A' -> gameMap.goWest();
+                    case 's', 'S' -> gameMap.goSouth();
                     case 'd', 'D' -> gameMap.goEast();
+                    case 'x' -> {
+                        System.out.println(String.format("HP: %s MANA: %s XP: %s LVL: %s",
+                                playerCharacter.getCurrentHP(),
+                                playerCharacter.getCurrentMana(),
+                                playerCharacter.getExperience(),
+                                playerCharacter.getLevel()));
+                    }
                     default -> throw new InvalidPlayerMove("Invalid player input!");
                 }
 
@@ -131,33 +149,62 @@ public class Game {
             } catch (InvalidPlayerMove e){
                 System.out.println(e.getMessage());
             } catch (Exception e){
-                System.out.println("Some other random error occured\n" + e.getMessage());
+                System.out.println("Some other random error occurred\n" + e.getMessage());
             }
         }
+
+        // determine next game loop
+        determineNextGameLoop();
    }
 
     private void determineNextGameLoop() {
        switch (gameState) {
-           case FINISHED_BAD -> System.out.println("GAME OVER!");
+           case FINISHED_BAD ->{
+               System.out.println("GAME OVER!\n\nContinue? (Y/N)");
+           }
            case FINISHED_GOOD -> {
-               System.out.println("MAP COMPLETED!");
-               gameMap = Grid.createRandomGrid(playerCharacter, runningAccount);
-               gameState = GameState.RUNNING;
-               gameLoop();
+               System.out.println("MAP COMPLETED!\n\nContinue? (Y/N)");
            }
        }
+
+        char choice = System.console().readLine().charAt(0);
+        if (choice == 'Y' || choice == 'y') {
+            gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
+            gameState = GameState.RUNNING;
+            gameLoop();
+        }
    }
 
    public void run() {
+       // 1. log in
+       boolean loggedIn = logIn();
+       if (loggedIn) {
+           // 2. choose character
+           runningAccount.printCharactersCreated();
+           chooseCharacter();
+
+           // 3. genearte the map
+           gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
+           System.out.println(gameMap.toString());
+           gameLoop();
+           determineNextGameLoop();
+       }
+   }
+
+   public void runTest() {
+        // 1. log in
         boolean loggedIn = logIn();
         if (loggedIn) {
+            // 2. choose character
             runningAccount.printCharactersCreated();
             chooseCharacter();
 
+            // 3. genearte the map
             gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
             System.out.println(gameMap.toString());
+
+            // 4. enter game loop
             gameLoop();
-            determineNextGameLoop();
         }
     }
 
@@ -169,5 +216,4 @@ public class Game {
         this.playerCharacter = playerCharacter;
     }
 
-    // method for getting the cell commands and next available command
 }

@@ -7,18 +7,22 @@ import Common.Game;
 import CustomExceptions.InvalidPlayerMove;
 import Enums.CellEntityType;
 import Enums.GameState;
+import Enums.Skills;
 import Spells.Spell;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Grid extends ArrayList<ArrayList<Cell>> {
+    //region Constants
     static final int MAX_GRID_SIZE = 10;
     static final int MIN_GRID_SIZE = 5;
 
-    static final int MAX_PORTALS_ALLOWED = 1;
     static final int MIN_SANCTUARY_COUNT = 2;
     static final int MIN_ENEMY_COUNT = 4;
+
+    static final int XP_MULTIPLIER = 5;
+    //endregion
 
     private int width;
     private int length;
@@ -46,114 +50,84 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         instance = this;
     }
 
-    static public Grid createRandomGrid(Character currentCharacter, Account account) {
-        int portalCount = 0;
+    public static Grid createRandomGrid(Character currentCharacter, Account account) {
         int sanctuaryCount = 0;
         int enemyCount = 0;
 
+        // generate empty map
         Grid gameMap = new Grid(currentCharacter, account);
         for (int i = 0; i < gameMap.width; i++ ) {
             gameMap.add(new ArrayList<Cell>());
 
             for (int j = 0; j < gameMap.length; j++ ) {
-                gameMap.get(i).add(new Cell(i, j));
-
-                Cell cell = gameMap.get(i).get(j);
-                if (cell.getCellType() == CellEntityType.PORTAL &&
-                    portalCount < MAX_PORTALS_ALLOWED) {
-                    portalCount++;
-                } else {
-                    cell.setCellType(CellEntityType.VOID);
-                }
-
-                if (cell.getCellType() == CellEntityType.SANCTUARY) {
-                    sanctuaryCount++;
-                }
-
-                if (cell.getCellType() == CellEntityType.ENEMY) {
-                    enemyCount++;
-                }
-
-                if (cell.getCellType() == CellEntityType.VOID &&
-                    gameMap.characterCell == null) {
-                    gameMap.characterCell = cell;
-                    cell.setVisited(true);
-                }
+                gameMap.get(i).add(new Cell(j, i, CellEntityType.VOID));
             }
         }
 
-        if (portalCount < MAX_PORTALS_ALLOWED) {
-            for (int i = 0; i < gameMap.width; i++ ) {
-                for (int j = 0; j < gameMap.length; j++ ) {
-                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID &&
-                            portalCount < MAX_PORTALS_ALLOWED) {
-                        portalCount++;
-                        gameMap.get(i).get(j).setCellType(CellEntityType.PORTAL);
-                    }
-                }
-            }
-
-        }
-
-        if (sanctuaryCount < MIN_SANCTUARY_COUNT) {
-            for (int i = 0; i < gameMap.width; i++ ) {
-                for (int j = 0; j < gameMap.length; j++ ) {
-                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID &&
-                        sanctuaryCount < MIN_SANCTUARY_COUNT) {
-                        sanctuaryCount++;
-                        gameMap.get(i).get(j).setCellType(CellEntityType.SANCTUARY);
-                    }
-                }
-            }
-        }
-
-        if (enemyCount < MIN_ENEMY_COUNT) {
-            for (int i = 0; i < gameMap.width; i++ ) {
-                for (int j = 0; j < gameMap.length; j++ ) {
-                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID &&
-                        enemyCount < MIN_ENEMY_COUNT) {
-                        enemyCount++;
-                        gameMap.get(i).get(j).setCellType(CellEntityType.ENEMY);
-                    }
-                }
-            }
-        }
-
-        if (gameMap.characterCell == null) {
-            for (int i = 0; i < gameMap.width; i++) {
-                for (int j = 0; j < gameMap.length; j++) {
-                    if (gameMap.get(i).get(j).getCellType() == CellEntityType.VOID) {
-                        gameMap.characterCell = gameMap.get(i).get(j);
-                    }
-                }
-            }
-
-            if (gameMap.characterCell == null) {
-                if (sanctuaryCount - 1 >= MIN_SANCTUARY_COUNT) {
-                    sanctuaryCount--;
-                    for (int i = 0; i < gameMap.width; i++) {
-                        for (int j = 0; j < gameMap.length; j++) {
-                            if (gameMap.get(i).get(j).getCellType() == CellEntityType.SANCTUARY) {
-                                gameMap.characterCell = gameMap.get(i).get(j);
-                            }
-                        }
-                    }
-
-                }
-            }
-
-            if (gameMap.characterCell == null) {
-                for (int i = 0; i < gameMap.width; i++) {
-                    for (int j = 0; j < gameMap.length; j++) {
-                        if (gameMap.get(i).get(j).getCellType() == CellEntityType.ENEMY) {
-                            gameMap.characterCell = gameMap.get(i).get(j);
-                        }
-                    }
-                }
-            }
-        }
-
+        // add player and portal
+        gameMap.characterCell = gameMap.get(0).get(0);
         gameMap.characterCell.setVisited(true);
+        gameMap.get(gameMap.width - 1).get(gameMap.length - 1).setCellType(CellEntityType.PORTAL);
+
+        // add enemies
+        while (enemyCount < MIN_ENEMY_COUNT) {
+            Random rand = new Random();
+            int y = rand.nextInt(gameMap.width);
+            int x = rand.nextInt(gameMap.length);
+
+            Cell cell = gameMap.get(y).get(x);
+            if (cell.getCellType() == CellEntityType.VOID &&
+                cell != gameMap.get(0).get(0) &&
+                cell != gameMap.get(gameMap.width - 1).get(gameMap.length - 1)) {
+                cell.setCellType(CellEntityType.ENEMY);
+                enemyCount++;
+            }
+        }
+
+        // add sanctuaries
+        while (sanctuaryCount < MIN_SANCTUARY_COUNT) {
+            Random rand = new Random();
+            int y = rand.nextInt(gameMap.width);
+            int x = rand.nextInt(gameMap.length);
+            Cell cell = gameMap.get(y).get(x);
+            if (cell.getCellType() == CellEntityType.VOID &&
+                cell != gameMap.get(0).get(0) &&
+                cell != gameMap.get(gameMap.width - 1).get(gameMap.length - 1)) {
+                cell.setCellType(CellEntityType.SANCTUARY);
+                sanctuaryCount++;
+            }
+        }
+
+        sanctuaryCount--;
+        enemyCount--;
+
+        // fill the void spaces
+        for (int i = 0; i < gameMap.width; i++ ) {
+            for (int j = 0; j < gameMap.length; j++ ) {
+
+                if ((i == 0 && j == 0) ||
+                    (i == gameMap.width - 1 && j == gameMap.length - 1)) {
+                    continue;
+                }
+
+                Random rand = new Random();
+                int choice = rand.nextInt(4);
+
+                switch (choice) {
+                    case 0 -> {
+                        gameMap.get(i).get(j).setCellType(CellEntityType.ENEMY);
+                        enemyCount++;
+                    }
+                    case 1 -> {
+                        gameMap.get(i).get(j).setCellType(CellEntityType.SANCTUARY);
+                        sanctuaryCount++;
+                    }
+                    default -> {
+                    }
+                }
+            }
+        }
+
         return gameMap;
     }
 
@@ -202,7 +176,6 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     }
 
     private void cellAction(Cell cell) {
-        final int XP_MULTIPLIER = 5;
 
         if (!cell.isVisited()) {
             Random rand = new Random();
@@ -210,17 +183,28 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
             switch (cell.getCellType()) {
                 case VOID -> {
                     // do nothing;
+                    Game.getInstance().getAchievements().get(0).setCompleted(true);
                 }
                 case SANCTUARY -> {
+                    Game.getInstance().getAchievements().get(1).setCompleted(true);
                     // add random to life and mana to player
-                    playerCharacter.healthRegen(rand.nextInt(playerCharacter.MAX_HP));
-                    playerCharacter.manaRegen(rand.nextInt(playerCharacter.MAX_MANA));
+                    int hp = rand.nextInt(playerCharacter.MAX_HP);
+                    int mana = rand.nextInt(playerCharacter.MAX_MANA);
+                    playerCharacter.healthRegen(hp);
+                    playerCharacter.manaRegen(mana);
+                    System.out.println("Player received " + hp + " HP, " + mana + " Mana.");
                 }
                 case PORTAL -> {
                     playerCharacter.setLevel(playerCharacter.getLevel() + 1);
                     playerCharacter.setExperience(playerCharacter.getExperience() + XP_MULTIPLIER * playerCharacter.getLevel());
                     account.setNoPlayedGames(account.getNoPlayedGames() + 1);
                     Game.getInstance().setGameState(GameState.FINISHED_GOOD);
+                    playerCharacter.addSkillPoints(1, Skills.CHARISMA);
+                    playerCharacter.addSkillPoints(1, Skills.STRENGTH);
+                    playerCharacter.addSkillPoints(1, Skills.DEXTERITY);
+                    if (mapDiscovered()){
+                        Game.getInstance().getAchievements().get(2).setCompleted(true);
+                    }
                 }
                 case ENEMY -> {
                     // enemy encounter
@@ -235,6 +219,16 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         }
     }
 
+    private boolean mapDiscovered(){
+        boolean discovered= true;
+        for (int i = 0; i < width; i++){
+            for (int j = 0; j < length; j++){
+                if (!get(i).get(j).isVisited())
+                    discovered = false;
+            }
+        }
+        return discovered;
+    }
     public void battleEnemy(Enemy enemy){
         int turn = 0;
         while (playerCharacter.isAlive() && enemy.isAlive()) {
@@ -256,7 +250,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                     System.out.println("Normal attack.\n");
                     if(playerCharacter.canUseAbility(null, enemy)){
                         enemy.receiveDamage(playerCharacter.getDamage());
-                        playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.NORMAL_DAMAGE_COST);
+                        playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.specialManaCost(playerCharacter.NORMAL_DAMAGE_COST));
                     }
                 } else {
                     if (choice - 1 <= playerCharacter.getAbilities().size() - 1){
@@ -265,7 +259,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                         Spell spell = playerCharacter.getAbilities().get(choice -1);
                         if (playerCharacter.canUseAbility(spell, enemy)){
                             enemy.receiveDamage(spell.getDamage());
-                            playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - spell.getDamage());
+                            playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.specialManaCost(spell.getDamage()));
                         }
                     }
                 }
@@ -292,6 +286,19 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
             turn++;
         }
+
+        if (playerCharacter.isAlive()){
+            Random rand = new Random();
+//            int hp = rand.nextInt(playerCharacter.MAX_HP);
+//            int mana = rand.nextInt(playerCharacter.MAX_MANA);
+            int hp = playerCharacter.getCurrentHP()*2;
+            int mana = playerCharacter.MAX_MANA;
+            int xp = rand.nextInt(5) + 1;
+            playerCharacter.healthRegen(playerCharacter.getCurrentHP()*2);
+            playerCharacter.manaRegen(playerCharacter.MAX_MANA);
+            playerCharacter.setExperience(playerCharacter.getExperience() + xp);
+            System.out.println("Player received " + hp + " HP, " + mana + " Mana and " + xp  + " extra XP");
+        }
     }
 
     public void setPlayerCharacter(Character playerCharacter) {
@@ -302,7 +309,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         return playerCharacter;
     }
 
-    // if player cannot move an exception is thrown and Common.Game class handles it
+    //region Player navigation
     public void goNorth() {
         try{
             characterCell = get(characterCell.getX() - 1).get(characterCell.getY());
@@ -343,6 +350,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
             throw new InvalidPlayerMove("Player cannot go east");
         }
     }
+    //endregion
 
     @Override
     public String toString() {
@@ -365,7 +373,6 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         }
         return output;
     }
-
 
     public String toString(boolean reveal) {
         String output = "";

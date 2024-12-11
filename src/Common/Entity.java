@@ -18,7 +18,7 @@ abstract public class Entity implements Battle {
 
     protected final int DAMAGE_REDUCTION = 5;
     protected final int DAMAGE_BUFF = 5;
-    protected final int MANA_REDUCTION = 5;
+    public final int MANA_REDUCTION = 5;
     //endregion
 
     //region Abilities of the entity

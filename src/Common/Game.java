@@ -150,11 +150,11 @@ public class Game {
                     case 's', 'S' -> gameMap.goSouth();
                     case 'd', 'D' -> gameMap.goEast();
                     case 'x' -> {
-                        System.out.println(String.format("HP: %s MANA: %s XP: %s LVL: %s",
+                        System.out.printf("HP: %s MANA: %s XP: %s LVL: %s%n",
                                 playerCharacter.getCurrentHP(),
                                 playerCharacter.getCurrentMana(),
                                 playerCharacter.getExperience(),
-                                playerCharacter.getLevel()));
+                                playerCharacter.getLevel());
                         for (Achievement achievement : achievements) {
                             System.out.println(achievement);
                         }

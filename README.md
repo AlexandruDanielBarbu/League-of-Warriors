@@ -47,3 +47,6 @@ or not by pressing `n`.
 
 I have added `achievements`, used the `singleton pattern` for the `Game` class changed the logic of the map printing
 methode and altered the logic of the `stats`, `mana cost`, `getDamage` and so on...
+
+The player spawns at position `(0,0)` and the portal at position `(width, length)`. I wanted the player to be forced to
+explore the entire map for sanctuaries before reaching the end.

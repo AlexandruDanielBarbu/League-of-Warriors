@@ -21,6 +21,7 @@ public class Game {
         achievements.add(new DevoidOfLife());
         achievements.add(new Oasis());
         achievements.add(new Wasteland());
+        achievements.add(new Death());
     }
 
     public static synchronized Game getInstance() {
@@ -103,6 +104,8 @@ public class Game {
 
         if (!wasFound) {
             System.out.println("You do not have an account!");
+            return logIn();
+
         }
 
         return wasFound;
@@ -117,8 +120,20 @@ public class Game {
 
     private void chooseCharacter() {
         System.out.print("Choose a character by typing his number: ");
+        int characterNumber = 0;
 
-        int characterNumber = Integer.parseInt(System.console().readLine());
+        try {
+            characterNumber = Integer.parseInt(System.console().readLine());
+        } catch (NumberFormatException e) {
+            characterNumber = 0;
+        }
+
+        if (characterNumber <= 0 || characterNumber >= achievements.size()) {
+            System.out.println("Invalid character number!");
+            chooseCharacter();
+            return;
+        }
+
         playerCharacter = runningAccount.getPlayerCharacter(characterNumber);
         System.out.println(playerCharacter);
     }
@@ -140,6 +155,9 @@ public class Game {
                                 playerCharacter.getCurrentMana(),
                                 playerCharacter.getExperience(),
                                 playerCharacter.getLevel()));
+                        for (Achievement achievement : achievements) {
+                            System.out.println(achievement);
+                        }
                     }
                     default -> throw new InvalidPlayerMove("Invalid player input!");
                 }
@@ -169,6 +187,9 @@ public class Game {
 
         char choice = System.console().readLine().charAt(0);
         if (choice == 'Y' || choice == 'y') {
+            if (gameState == GameState.FINISHED_BAD) {
+                achievements.get(3).setCompleted(true);
+            }
             gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
             gameState = GameState.RUNNING;
             gameLoop();

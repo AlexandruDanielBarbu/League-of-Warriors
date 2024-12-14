@@ -5,4 +5,5 @@ public enum GameState {
     FINISHED_GOOD,
     FINISHED_BAD,
     PAUSED,
+    QUIT,
 }

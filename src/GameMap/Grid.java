@@ -223,12 +223,15 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         boolean discovered= true;
         for (int i = 0; i < width; i++){
             for (int j = 0; j < length; j++){
-                if (!get(i).get(j).isVisited())
+                if (!get(i).get(j).isVisited()) {
                     discovered = false;
+                    break;
+                }
             }
         }
         return discovered;
     }
+
     public void battleEnemy(Enemy enemy){
         int turn = 0;
         while (playerCharacter.isAlive() && enemy.isAlive()) {
@@ -237,20 +240,33 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
             if (turn % 2 == 0){
                 System.out.println("Player turn...");
-                System.out.println("0. Normal attack Damage: " + playerCharacter.NORMAL_DAMAGE + " Mana cost: " + playerCharacter.NORMAL_DAMAGE_COST);
+                System.out.println("0. Normal attack Damage: " + playerCharacter.NORMAL_DAMAGE);
                 int index = 1;
                 for(Spell spell : playerCharacter.getAbilities()){
                     System.out.println(index + ". " + spell);
                     index++;
                 }
                 System.out.print("\nChoose attack: ");
-                int choice = Integer.parseInt(System.console().readLine());
+                int choice = -1;
+                while (choice == -1) {
+                    try {
+                        choice = Integer.parseInt(System.console().readLine());
+                        if (choice < 0 || choice - 1 >= playerCharacter.getAbilities().size()) {
+                            choice = -1;
+                            System.out.println("Invalid choice");
+                        }
+                    } catch (Exception e) {
+                        choice = -1;
+                        System.out.println("Invalid choice");
+                    }
+
+                }
 
                 if (choice == 0){
                     System.out.println("Normal attack.\n");
                     if(playerCharacter.canUseAbility(null, enemy)){
                         enemy.receiveDamage(playerCharacter.getDamage());
-                        playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.specialManaCost(playerCharacter.NORMAL_DAMAGE_COST));
+//                        playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.specialManaCost(playerCharacter.NORMAL_DAMAGE_COST));
                     }
                 } else {
                     if (choice - 1 <= playerCharacter.getAbilities().size() - 1){
@@ -273,7 +289,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                 if (choice == 0){
                     if (enemy.canUseAbility(null, playerCharacter)){
                         playerCharacter.receiveDamage(enemy.getDamage());
-                        enemy.setCurrentMana(enemy.getCurrentMana() - enemy.NORMAL_DAMAGE_COST);
+//                        enemy.setCurrentMana(enemy.getCurrentMana() - enemy.NORMAL_DAMAGE_COST);
                     }
                 } else {
                     Spell spell = enemy.getAbilities().get(choice - 1);

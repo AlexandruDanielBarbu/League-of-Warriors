@@ -3,6 +3,8 @@ package Characters;
 import Common.Entity;
 import Enums.Skills;
 
+import java.util.ArrayList;
+
 abstract public class Character extends Entity {
     protected final int MAX_STAT = 10;
 
@@ -32,6 +34,15 @@ abstract public class Character extends Entity {
     protected int strength = 0;
     protected int charisma = 0;
     protected int dexterity = 0;
+
+    public ArrayList<Integer> getAttributes() {
+        ArrayList<Integer> attributes = new ArrayList<>();
+        attributes.add(strength);
+        attributes.add(charisma);
+        attributes.add(dexterity);
+
+        return attributes;
+    }
 
     public boolean addSkillPoints(int points, Skills skill) {
         switch (skill) {

@@ -27,8 +27,8 @@ public class Game {
     public static synchronized Game getInstance() {
         if (game_instance == null) {
             game_instance = new Game();
-            return game_instance;
         }
+
         return game_instance;
     }
     //endregion
@@ -204,7 +204,7 @@ public class Game {
            runningAccount.printCharactersCreated();
            chooseCharacter();
 
-           // 3. genearte the map
+           // 3. generate the map
            gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
            System.out.println(gameMap.toString());
            gameLoop();
@@ -220,7 +220,7 @@ public class Game {
             runningAccount.printCharactersCreated();
             chooseCharacter();
 
-            // 3. genearte the map
+            // 3. generate the map
             gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
             System.out.println(gameMap.toString());
 

@@ -1,5 +1,6 @@
 package Common;
 
+import Enums.CharacterType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import java.util.TreeSet;
 import Account.Account;
 import Account.Credentials;
 import Characters.Character;
+import Characters.CharacterFactory;
 import Characters.Mage;
 import Characters.Rogue;
 import Characters.Warrior;
@@ -73,18 +75,23 @@ public class JsonInput {
 
                         Character newCharacter = null;
                         if (profession.equals("Warrior"))
-                            newCharacter = new Warrior(cname, experience, lvl);
+                            newCharacter = CharacterFactory.buildCharacter(CharacterType.WARRIOR, cname, experience, lvl);
                         if (profession.equals("Rogue"))
-                            newCharacter = new Rogue(cname, experience, lvl);
+                            newCharacter = CharacterFactory.buildCharacter(CharacterType.ROGUE, cname, experience, lvl);
                         if (profession.equals("Mage"))
-                            newCharacter = new Mage(cname, experience, lvl);
+                            newCharacter = CharacterFactory.buildCharacter(CharacterType.MAGE, cname, experience, lvl);
                         characters.add(newCharacter);
                     }
                 } catch (JSONException e) {
                     System.out.println("! This account doesn't have characters !");
                 }
 
-                Account.Information information = new Account.Information(credentials, favoriteGames, name, country);
+                Account.Information information = new Account.Information()
+                                                    .configPlayerCredentials(credentials)
+                                                    .configFavoriteGames(favoriteGames)
+                                                    .configPlayerName(name)
+                                                    .configPlayerCountry(country);
+
                 Account account = new Account(characters, gamesNumber, information);
                 accounts.add(account);
             }

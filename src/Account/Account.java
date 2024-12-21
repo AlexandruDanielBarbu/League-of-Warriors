@@ -13,6 +13,26 @@ public class Account {
         private String playerCountry;
         private SortedSet<String> favoriteGames;
 
+        public Information configPlayerCredentials(Credentials playerCredentials) {
+            this.playerCredentials = playerCredentials;
+            return this;
+        }
+
+        public Information configPlayerName(String playerName) {
+            this.playerName = playerName;
+            return this;
+        }
+
+        public Information configPlayerCountry(String playerCountry) {
+            this.playerCountry = playerCountry;
+            return this;
+        }
+
+        public Information configFavoriteGames(SortedSet<String> favoriteGames) {
+            this.favoriteGames = favoriteGames;
+            return this;
+        }
+
         public Information(String email, String password, String playerName, String playerCountry) {
             this.playerCredentials = new Credentials(email, password);
             favoriteGames = new TreeSet<>();
@@ -20,12 +40,6 @@ public class Account {
             this.playerCountry = playerCountry;
         }
 
-        public Information(Credentials playerCredentials, SortedSet<String> favoriteGames, String playerName, String playerCountry) {
-            this.playerCredentials = playerCredentials;
-            this.favoriteGames = favoriteGames;
-            this.playerName = playerName;
-            this.playerCountry = playerCountry;
-        }
 
         public Information(){
             this.playerCredentials = new Credentials();
@@ -51,28 +65,28 @@ public class Account {
     ArrayList<Character> playerCharacters;
     private int noPlayedGames;
 
-    public Account(String email,
-                   String password,
-                   String playerName,
-                   String country,
-                   ArrayList<Character> playerCharacters,
-                   int noPlayedGames) {
+//    public Account(String email,
+//                   String password,
+//                   String playerName,
+//                   String country,
+//                   ArrayList<Character> playerCharacters,
+//                   int noPlayedGames) {
+//
+//        this.playerInfo = new Information(email, password, playerName, country);
+//        this.playerCharacters = playerCharacters;
+//        this.noPlayedGames = noPlayedGames;
+//    }
 
-        this.playerInfo = new Information(email, password, playerName, country);
-        this.playerCharacters = playerCharacters;
-        this.noPlayedGames = noPlayedGames;
-    }
+//    public Account() {
+//        this.playerInfo = new Information();
+//        this.playerCharacters = new ArrayList<>();
+//        this.noPlayedGames = 0;
+//    }
 
     public Account(ArrayList<Character> playerCharacters, int noPlayedGames, Information playerInfo) {
         this.playerCharacters = playerCharacters;
         this.noPlayedGames = noPlayedGames;
         this.playerInfo = playerInfo;
-    }
-
-    public Account() {
-        this.playerInfo = new Information();
-        this.playerCharacters = new ArrayList<>();
-        this.noPlayedGames = 0;
     }
 
     public void printCharactersCreated() {

@@ -1,8 +1,10 @@
 package UI;
 
 import Characters.Character;
+import Common.Enemy;
 import Common.Game;
 import Enums.CellEntityType;
+import Enums.GameState;
 import GameMap.Grid;
 
 import javax.swing.*;
@@ -11,6 +13,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class GamePageUI extends GameWindow {
+    static private GameState gameState = GameState.RUNNING;
+
+    static public void setGameState(GameState gameState) {
+        GamePageUI.gameState = gameState;
+    }
+
     private int gridSize;
     private JPanel leftPanel;
     private JButton btnNorth, btnSouth, btnEast, btnWest;
@@ -43,9 +51,8 @@ public class GamePageUI extends GameWindow {
         btnNorth.addActionListener(e -> {
             // move character
             Game.getInstance().getGameMap().goNorth();
+            updateVisualsSpawnBattleFrame();
 
-            // update visuals
-            updateVisuals(Game.getInstance().getPlayerCharacter());
         });
 
         btnSouth = new JButton("South");
@@ -54,9 +61,8 @@ public class GamePageUI extends GameWindow {
         btnSouth.addActionListener(e -> {
             // move character
             Game.getInstance().getGameMap().goSouth();
+            updateVisualsSpawnBattleFrame();
 
-            // update visuals
-            updateVisuals(Game.getInstance().getPlayerCharacter());
         });
 
         btnEast = new JButton("East");
@@ -65,9 +71,8 @@ public class GamePageUI extends GameWindow {
         btnEast.addActionListener(e -> {
             // move character
             Game.getInstance().getGameMap().goEast();
+            updateVisualsSpawnBattleFrame();
 
-            // update visuals
-            updateVisuals(Game.getInstance().getPlayerCharacter());
         });
 
         btnWest = new JButton("West");
@@ -76,9 +81,7 @@ public class GamePageUI extends GameWindow {
         btnWest.addActionListener(e -> {
             // move character
             Game.getInstance().getGameMap().goWest();
-
-            // update visuals
-            updateVisuals(Game.getInstance().getPlayerCharacter());
+            updateVisualsSpawnBattleFrame();
         });
 
         leftPanel.add(btnNorth);
@@ -118,6 +121,21 @@ public class GamePageUI extends GameWindow {
         }
     }
 
+    private void updateVisualsSpawnBattleFrame() {
+        System.out.println(Game.getInstance().getGameMap().getCharacterCell().getCellType());
+        if (Game.getInstance().getGameMap().getCharacterCell().getCellType() == CellEntityType.ENEMY
+            && !Game.getInstance().getGameMap().getCharacterCell().isVisited()) {
+            FightUI fightUI = new FightUI(Game.getInstance().getPlayerCharacter(), new Enemy());
+            fightUI.updateStatsVisuals();
+            fightUI.setVisible(true);
+        }
+        if (gameState == GameState.FINISHED_BAD) {
+            System.exit(0);
+        }
+        // update visuals
+        updateVisuals(Game.getInstance().getPlayerCharacter());
+    }
+
     private void updateVisuals(Character playerCharacter) {
         // Update player visuals
         setLevelLbl(playerCharacter.getLevel());
@@ -137,7 +155,6 @@ public class GamePageUI extends GameWindow {
             boolean reset = showPopup("Do you want to continue?");
             if (reset) {
                 resetMap();
-
             }
             else{
                 System.exit(0);
@@ -165,44 +182,7 @@ public class GamePageUI extends GameWindow {
         }
     }
 
-    // @returns User choice (boolean)
-    public static boolean showPopup(String message) {
-        // Create popup window
-        JDialog dialog = new JDialog((Frame) null, "Continue?", true);
-        dialog.setLayout(new BorderLayout());
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Message
-        JLabel label = new JLabel(message, JLabel.CENTER);
-        dialog.add(label, BorderLayout.CENTER);
-
-        // the Buttons
-        JPanel buttonPanel = new JPanel();
-        JButton yesButton = new JButton("Yes");
-        JButton noButton = new JButton("No");
-
-        final boolean[] result = {false};
-
-        yesButton.addActionListener((ActionEvent e) -> {
-            result[0] = true;
-            dialog.dispose();
-        });
-
-        noButton.addActionListener((ActionEvent e) -> {
-            result[0] = false;
-            dialog.dispose();
-        });
-
-        buttonPanel.add(yesButton);
-        buttonPanel.add(noButton);
-        dialog.add(buttonPanel, BorderLayout.SOUTH);
-
-        dialog.setSize(300, 150);
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-
-        return result[0];
-    }
 
     public void setLevelLbl(int level) {
         lblLevel.setText("Level: " + level);

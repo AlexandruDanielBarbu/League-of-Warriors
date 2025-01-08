@@ -5,6 +5,7 @@ import Characters.Character;
 import Common.Enemy;
 import Common.Game;
 import CustomExceptions.InvalidPlayerMove;
+import Enums.BattleStatus;
 import Enums.CellEntityType;
 import Enums.GameState;
 import Enums.Skills;
@@ -242,6 +243,58 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         return discovered;
     }
 
+    //region Player - Enemy battle system
+    static public BattleStatus playerTurn(Character playerCharacter, Enemy enemy, Spell spell) {
+        if (playerCharacter.isAlive()) {
+            if (spell == null) {
+                System.out.println("Normal attack.\n");
+                if (playerCharacter.canUseAbility(null, enemy)) {
+                    enemy.receiveDamage(playerCharacter.getDamage());
+                }
+            } else {
+                System.out.println("Spell attack.\n");
+                if (playerCharacter.canUseAbility(spell, enemy)) {
+                    enemy.accept(spell);
+                    playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.specialManaCost(spell.getDamage()));
+                }
+            }
+            return enemyTurn(playerCharacter, enemy);
+        } else {
+            // player is no longer alive
+            return BattleStatus.BATTLE_FINISHED_BAD;
+        }
+    }
+
+    static public BattleStatus enemyTurn(Character playerCharacter, Enemy enemy) {
+        if (enemy.isAlive()) {
+
+            System.out.println("Enemy turn");
+
+            Random rand = new Random();
+            int choice = rand.nextInt(4);
+            System.out.println("choice of enemy: " + choice + "\n");
+
+            if (choice == 0){
+                if (enemy.canUseAbility(null, playerCharacter)){
+                    playerCharacter.receiveDamage(enemy.getDamage());
+                }
+            } else {
+                Spell spell = enemy.getAbilities().get(choice - 1);
+                if (enemy.canUseAbility(spell, playerCharacter)){
+                    playerCharacter.accept(spell);
+                    enemy.setCurrentMana((enemy.getCurrentMana()) - spell.getDamage());
+                }
+            }
+            if (!playerCharacter.isAlive())
+                return BattleStatus.BATTLE_FINISHED_BAD;
+            return BattleStatus.BATTLE_CONTINUE;
+        } else {
+            return BattleStatus.BATTLE_FINISHED_GOOD;
+        }
+    }
+    //endregion
+
+
     public void battleEnemy(Enemy enemy){
         int turn = 0;
         while (playerCharacter.isAlive() && enemy.isAlive()) {
@@ -340,7 +393,8 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         try{
             characterCell = get(characterCell.getX() - 1).get(characterCell.getY());
             cellAction(characterCell);
-            characterCell.setVisited(true);
+            Cell previouscell = get(characterCell.getX() + 1).get(characterCell.getY());
+            previouscell.setVisited(true);
         } catch (Exception e) {
             throw new InvalidPlayerMove("Player cannot go north");
         }
@@ -351,7 +405,8 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         try{
             characterCell = get(characterCell.getX() + 1).get(characterCell.getY());
             cellAction(characterCell);
-            characterCell.setVisited(true);
+            Cell previouscell = get(characterCell.getX() - 1).get(characterCell.getY());
+            previouscell.setVisited(true);
         } catch (Exception e) {
             throw new InvalidPlayerMove("Player cannot go south");
         }
@@ -361,7 +416,8 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         try {
             characterCell = get(characterCell.getX()).get(characterCell.getY() - 1);
             cellAction(characterCell);
-            characterCell.setVisited(true);
+            Cell previouscell = get(characterCell.getX()).get(characterCell.getY() + 1);
+            previouscell.setVisited(true);
         } catch (Exception e) {
             throw new InvalidPlayerMove("Player cannot go west");
         }
@@ -371,7 +427,8 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
         try {
             characterCell = get(characterCell.getX()).get(characterCell.getY() + 1);
             cellAction(characterCell);
-            characterCell.setVisited(true);
+            Cell previouscell = get(characterCell.getX()).get(characterCell.getY() - 1);
+            previouscell.setVisited(true);
         } catch (Exception e) {
             throw new InvalidPlayerMove("Player cannot go east");
         }

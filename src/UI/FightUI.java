@@ -3,6 +3,9 @@ package UI;
 import Characters.Character;
 import Characters.Mage;
 import Common.Enemy;
+import Enums.BattleStatus;
+import Enums.GameState;
+import GameMap.Grid;
 import Spells.Spell;
 
 import javax.swing.*;
@@ -24,7 +27,7 @@ public class FightUI extends GameWindow {
 
         setTitle("Fight");
         setSize(WINDOW_W, WINDOW_H);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -56,18 +59,19 @@ public class FightUI extends GameWindow {
 
         JButton attackButton = new JButton("ATTACK");
         attackButton.addActionListener(e -> {
-            // feed the normal attack to the battle code;
-            updateStatsVisuals();
-        });
-
-        JButton abilityButton = new JButton("ABILITY");
-        abilityButton.addActionListener(e -> {
-            // feed the selected spell to the battle code;
-            updateStatsVisuals();
+            playerEnemyEncounterOnePass(player, enemy, null);
         });
 
         JComboBox<Spell> spellComboBox = new JComboBox<>(player.getAbilities().toArray(new Spell[0]));
         spellComboBox.setMaximumSize(new Dimension(350, 20));
+
+        JButton abilityButton = new JButton("ABILITY");
+        abilityButton.addActionListener(e -> {
+            // feed the selected spell to the battle code;
+            Spell spell = (Spell) spellComboBox.getSelectedItem();
+            playerEnemyEncounterOnePass(player, enemy, spell);
+        });
+
 
         attackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         abilityButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -85,6 +89,25 @@ public class FightUI extends GameWindow {
         add(centerPanel, BorderLayout.CENTER);
         add(rightPanel, BorderLayout.EAST);
 
+    }
+
+    private void playerEnemyEncounterOnePass(Character player, Enemy enemy, Spell spell) {
+        // feed the normal attack to the battle code;
+        BattleStatus battleStatus = Grid.playerTurn(player, enemy, spell);
+        updateStatsVisuals();
+        boolean doContinue;
+        if (battleStatus == BattleStatus.BATTLE_FINISHED_GOOD) {
+            doContinue = showPopup("You won!");
+            this.dispose();
+        }
+        else if (battleStatus == BattleStatus.BATTLE_FINISHED_BAD) {
+            doContinue = showPopup("You lost... Continue?");
+            if (!doContinue) {
+                System.exit(0);
+            }
+            GamePageUI.setGameState(GameState.FINISHED_BAD);
+            this.dispose();
+        }
     }
 
     public void updateStatsVisuals() {

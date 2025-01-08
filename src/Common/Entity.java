@@ -1,6 +1,8 @@
 package Common;
 
 import Interfaces.Battle;
+import Interfaces.Element;
+import Interfaces.Visitor;
 import Spells.Earth;
 import Spells.Fire;
 import Spells.Ice;
@@ -8,7 +10,7 @@ import Spells.Spell;
 
 import java.util.ArrayList;
 
-abstract public class Entity implements Battle {
+abstract public class Entity implements Battle, Element<Entity> {
     //region CONSTANTS
     public final int MAX_HP = 100;
     public final int MAX_MANA = 100;
@@ -117,5 +119,9 @@ abstract public class Entity implements Battle {
         }
 
         return canUse;
+    }
+
+    public void accept(Visitor<Entity> visitor) {
+        visitor.visit(this);
     }
 }

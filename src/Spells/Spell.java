@@ -1,6 +1,9 @@
 package Spells;
 
-abstract public class Spell {
+import Common.Entity;
+import Interfaces.Visitor;
+
+abstract public class Spell implements Visitor<Entity> {
     //region Constants
     protected final int MAX_DAMAGE = 20;
     protected final int MAX_MANA_COST = 15;

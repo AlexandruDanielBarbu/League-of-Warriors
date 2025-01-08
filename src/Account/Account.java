@@ -62,6 +62,11 @@ public class Account {
     }
 
     Information playerInfo;
+
+    public ArrayList<Character> getPlayerCharacters() {
+        return playerCharacters;
+    }
+
     ArrayList<Character> playerCharacters;
     private int noPlayedGames;
 

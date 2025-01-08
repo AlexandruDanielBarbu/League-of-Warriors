@@ -1,6 +1,7 @@
 package Characters;
 
 import Enums.GameState;
+import Interfaces.Visitor;
 import Spells.Earth;
 import Spells.Fire;
 import Spells.Ice;
@@ -40,4 +41,5 @@ public class Rogue extends Character {
     public int getDamage() {
         return NORMAL_DAMAGE + (strength / 5) * DAMAGE_BUFF;
     }
+
 }

@@ -2,6 +2,7 @@ package Characters;
 
 import Common.Game;
 import Enums.GameState;
+import Interfaces.Visitor;
 import Spells.Earth;
 import Spells.Fire;
 import Spells.Ice;

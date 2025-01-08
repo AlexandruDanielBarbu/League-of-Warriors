@@ -24,6 +24,14 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
     static final int XP_MULTIPLIER = 5;
     //endregion
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
     private int width;
     private int length;
     private Account account;
@@ -32,6 +40,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
     public Grid instance;
 
+    //region Grid Generation
     private Grid(int width, int length, Character playerCharacter, Account account) {
         this.width = width;
         this.length = length;
@@ -174,9 +183,9 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
         return gameMap;
     }
+    //endregion
 
     private void cellAction(Cell cell) {
-
         if (!cell.isVisited()) {
             Random rand = new Random();
 
@@ -209,8 +218,9 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                 case ENEMY -> {
                     // enemy encounter
                     System.out.println("Battling enemy");
-                    Enemy enemy = new Enemy();
-                    battleEnemy(enemy);
+//                    Enemy enemy = new Enemy();
+//                    battleEnemy(enemy);
+                    // Battle enemy inside UI
                 }
                 default -> {
                     // nothing here
@@ -274,7 +284,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
                         Spell spell = playerCharacter.getAbilities().get(choice -1);
                         if (playerCharacter.canUseAbility(spell, enemy)){
-                            enemy.receiveDamage(spell.getDamage());
+                            enemy.accept(spell);
                             playerCharacter.setCurrentMana(playerCharacter.getCurrentMana() - playerCharacter.specialManaCost(spell.getDamage()));
                         }
                     }
@@ -294,7 +304,7 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
                 } else {
                     Spell spell = enemy.getAbilities().get(choice - 1);
                     if (enemy.canUseAbility(spell, playerCharacter)){
-                        playerCharacter.receiveDamage(spell.getDamage());
+                        playerCharacter.accept(spell);
                         enemy.setCurrentMana((enemy.getCurrentMana()) - spell.getDamage());
                     }
                 }

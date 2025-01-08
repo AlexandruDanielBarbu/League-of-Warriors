@@ -9,9 +9,14 @@ abstract public class Character extends Entity {
     protected final int MAX_STAT = 10;
 
     //region Details
+
     protected String name;
     protected int experience;
     protected int level;
+
+    public String getName() {
+        return name;
+    }
 
     public int getExperience() {
         return experience;
@@ -93,4 +98,5 @@ abstract public class Character extends Entity {
                " Profession " + getClass() +
                " Immunity [Fire,Earth,Ice]: " + "[" + fireImmunity + earthImmunity + iceImmunity + "]";
     }
+
 }

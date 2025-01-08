@@ -33,6 +33,14 @@ public class Game {
     }
     //endregion
 
+    public Grid getGameMap() {
+        return gameMap;
+    }
+
+    public void setGameMap(Grid gameMap) {
+        this.gameMap = gameMap;
+    }
+
     private Grid gameMap;
     private Character playerCharacter;
 
@@ -56,6 +64,9 @@ public class Game {
         this.accounts = accounts;
     }
 
+    public Account getRunningAccount() {
+        return runningAccount;
+    }
     // does not work yet
     public boolean tryAddAccount(Account account) {
         if (accounts.contains(account)) {
@@ -80,15 +91,7 @@ public class Game {
         runningAccount = account;
     }
 
-    private boolean logIn() {
-        System.out.println("Enter your credentials:");
-
-        System.out.print("Email: ");
-        String email = System.console().readLine();
-
-        System.out.print("Password: ");
-        String password = System.console().readLine();
-
+    public boolean logIn(String email, String password) {
         Credentials loggedInUserCredentials = new Credentials(email, password);
 
         boolean wasFound = false;
@@ -104,7 +107,7 @@ public class Game {
 
         if (!wasFound) {
             System.out.println("You do not have an account!");
-            return logIn();
+//            return logIn();
 
         }
 
@@ -118,6 +121,27 @@ public class Game {
 
     private ArrayList<Achievement> achievements;
 
+    public void chooseCharacter(Character character) {
+        ArrayList<Character> characterArrayList = runningAccount.getPlayerCharacters();
+        for (int i = 0; i < characterArrayList.size(); i++) {
+            if (characterArrayList.get(i).getName().equals(character.getName())) {
+                playerCharacter = characterArrayList.get(i);
+                System.out.println(playerCharacter);
+                System.out.println("Success!!");
+            }
+        }
+    }
+
+    private void chooseCharacter(int characterNumber) {
+        if (characterNumber <= 0 || characterNumber >= runningAccount.getPlayerCharacters().size()) {
+           System.out.println("Invalid character number!");
+        }
+        else {
+            playerCharacter = runningAccount.getPlayerCharacter(characterNumber);
+            System.out.println(playerCharacter);
+        }
+    }
+
     private void chooseCharacter() {
         System.out.print("Choose a character by typing his number: ");
         int characterNumber = 0;
@@ -128,7 +152,7 @@ public class Game {
             characterNumber = 0;
         }
 
-        if (characterNumber <= 0 || characterNumber >= achievements.size()) {
+        if (characterNumber <= 0 || characterNumber >= runningAccount.getPlayerCharacters().size()) {
             System.out.println("Invalid character number!");
             chooseCharacter();
             return;
@@ -189,7 +213,10 @@ public class Game {
         if (choice == 'Y' || choice == 'y') {
             if (gameState == GameState.FINISHED_BAD) {
                 achievements.get(3).setCompleted(true);
+                playerCharacter.healthRegen(playerCharacter.MAX_HP);
+                playerCharacter.manaRegen(playerCharacter.MAX_MANA);
             }
+
             gameMap = Grid.createHardcodedGrid(playerCharacter, runningAccount);
             gameState = GameState.RUNNING;
             gameLoop();
@@ -198,7 +225,8 @@ public class Game {
 
    public void run() {
        // 1. log in
-       boolean loggedIn = logIn();
+//       boolean loggedIn = logIn();
+       boolean loggedIn = true;
        if (loggedIn) {
            // 2. choose character
            runningAccount.printCharactersCreated();
@@ -214,7 +242,8 @@ public class Game {
 
    public void runTest() {
         // 1. log in
-        boolean loggedIn = logIn();
+//        boolean loggedIn = logIn();
+       boolean loggedIn = true;
         if (loggedIn) {
             // 2. choose character
             runningAccount.printCharactersCreated();

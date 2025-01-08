@@ -1,5 +1,6 @@
 package Common;
 
+import Interfaces.Visitor;
 import Spells.Earth;
 import Spells.Fire;
 import Spells.Ice;
@@ -48,4 +49,5 @@ public class Enemy extends Entity {
     public String toString() {
         return "Enemy: Immunity [Fire,Earth,Ice]: " + "[" + fireImmunity + earthImmunity + iceImmunity + "]";
     }
+
 }

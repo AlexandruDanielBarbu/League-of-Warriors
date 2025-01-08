@@ -28,13 +28,9 @@ public class LoginPage extends GameWindow {
 
         lblEmail = new JLabel("Email");
         JTextField txtEmail = new JTextField(20);
-//        txtEmail.setText(emailPlaceholder);
-//        txtEmail.setForeground(Color.GRAY);
 
         lblPassword = new JLabel("Password");
         JPasswordField txtPassword = new JPasswordField(20);
-//        txtPassword.setText(passwordPlaceholder);
-//        txtPassword.setForeground(Color.GRAY);
 
         btnSubmit = new JButton("Submit");
         btnSubmit.setBackground(Color.WHITE);

@@ -130,7 +130,17 @@ public class GamePageUI extends GameWindow {
             fightUI.setVisible(true);
         }
         if (gameState == GameState.FINISHED_BAD) {
-            System.exit(0);
+            boolean reset = showPopup("So do you really want to continue mate?");
+            if (reset) {
+                resetMap();
+                Game.getInstance().getPlayerCharacter().healthRegen(Game.getInstance().getPlayerCharacter().MAX_HP);
+                Game.getInstance().getPlayerCharacter().manaRegen(Game.getInstance().getPlayerCharacter().MAX_MANA);
+                gameState = GameState.RUNNING;
+                Game.getInstance().getPlayerCharacter().setAlive(true);
+            }
+            else{
+                System.exit(0);
+            }
         }
         // update visuals
         updateVisuals(Game.getInstance().getPlayerCharacter());

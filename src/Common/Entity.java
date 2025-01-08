@@ -35,6 +35,10 @@ abstract public class Entity implements Battle, Element<Entity> {
     }
     //endregion
 
+    public void setFireImmunity(boolean fireImmunity) {
+        this.fireImmunity = fireImmunity;
+    }
+
     //region HP and MANA
     protected boolean isAlive = true;
     protected int currentHP = MAX_HP;

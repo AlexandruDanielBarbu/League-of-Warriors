@@ -267,11 +267,15 @@ public class Grid extends ArrayList<ArrayList<Cell>> {
 
     static public BattleStatus enemyTurn(Character playerCharacter, Enemy enemy) {
         if (enemy.isAlive()) {
-
             System.out.println("Enemy turn");
 
             Random rand = new Random();
             int choice = rand.nextInt(4);
+
+            if (enemy.getCurrentMana() <= enemy.MAX_MANA / 10) {
+                choice = 0;
+            }
+
             System.out.println("choice of enemy: " + choice + "\n");
 
             if (choice == 0){
